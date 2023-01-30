@@ -1,39 +1,43 @@
-
 async function fetchPokemon() {
-  const pokemonsPromises = [];
   const pokemonNumbers = 151;
-  let response;
+  const pokemonsPromises = generatePokemonPromises(pokemonNumbers);
 
-  for (let i = 1; i <= pokemonNumbers; i++) {
-    response = await fetch(getPokemonById(i));
-    pokemonsPromises.push(response.json());
-  }
   await Promise.all(pokemonsPromises)
-    .then(pokemons => {
-
-      const pokemonList = pokemons.reduce((element, pokemon) => {
-        const types = pokemon.types.map(typeInfo => typeInfo.type.name);
-
-        element += `
-          <li class="card ${types[0]}">
-            <img class="card-image" alt="${pokemon.name}" src="https://raw.githubusercontent.com/HybridShivam/Pokemon/master/assets/images/${zeroPadding(pokemon.id)}.png">
-            <h2 class="card-title">${pokemon.id}. ${pokemon.name}</h2>
-            <p class="card-subtitle">${types.join(' | ')}</p>
-          </li>
-        `;
-        return element;
-      }, '');
-      const ul = document.querySelector('[data-js="pokedex"]');
-      ul.innerHTML = pokemonList;
-    });
+    .then(generateHtml)
+    .then(insertPokemonsIntoPage);
 };
+
+function generatePokemonPromises(pokemonNumbers) {
+  return Array(pokemonNumbers).fill().map((_, i) =>
+    fetch(getPokemonById(i + 1)).then(response => response.json()));
+};
+
+function generateHtml(pokemons) {
+    return pokemons.reduce((element, { id, name, types }) => {
+      const elementTypes = types.map(typeInfo => typeInfo.type.name);
+
+      element += `
+        <li class="card ${elementTypes[0]}">
+          <img class="card-image" alt="${name}" src="https://raw.githubusercontent.com/HybridShivam/Pokemon/master/assets/images/${zeroPadding(id)}.png">
+          <h2 class="card-title">${id}. ${name}</h2>
+          <p class="card-subtitle">${elementTypes.join(' | ')}</p>
+        </li>
+      `;
+      return element;
+    }, '');
+};
+
+function insertPokemonsIntoPage(pokemons) {
+  const ul = document.querySelector('[data-js="pokedex"]');
+  ul.innerHTML = pokemons;
+}
 
 function getPokemonById(id) {
   return `https://pokeapi.co/api/v2/pokemon/${id}`
-}
+};
 
 function zeroPadding(number) {
   return String(number).padStart(3, '0');
-}
+};
 
 fetchPokemon();
