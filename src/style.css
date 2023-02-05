@@ -3,7 +3,7 @@ body {
   background: linear-gradient(to right, rgb(197, 230, 236), rgb(239, 187, 230));
   color: white;
   margin: 0;
-  font-family: rubik;
+  font-family: sans-serif;
 }
 
 .container {
@@ -69,6 +69,10 @@ h1 {
   background-color: #f4e7da;
 }
 
+.ghost {
+  background-color: #c998ec;
+}
+
 .rock {
   background-color: #d5d5d4;
 }
@@ -121,9 +125,14 @@ h1 {
 .card-subtitle {
   margin-top: 5px;
   color: #666;
-  font-weight: lighter;
+  font-weight: bolder;
   position: relative;
   z-index: 2;
+  background: white;
+  border-radius: 20px;
+  padding: 5px;
+  width: 60%;
+  margin: auto;
 }
 
 .card-image {
